@@ -1,6 +1,9 @@
 import React, { createContext } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
-import { PermissionStatus } from 'react-native-permissions';
+import { AppState } from 'react-native';
+import { Platform } from 'react-native';
+import { check, PERMISSIONS, PermissionStatus, request } from 'react-native-permissions';
 
 export interface PermissionsState {
   locationStatus: PermissionStatus;
@@ -12,29 +15,52 @@ const permissionsInitState: PermissionsState = {
 
 type PermissionsContextProps = {
   permissions: PermissionsState,
-  askLocationPermision: () => void,
-  checkLocationPermision: () => void,
+  askLocationPermission: () => void,
+  checkLocationPermission: () => void,
 }
-
-const PermissionsContext = createContext({} as PermissionsContextProps);
+   
+export const PermissionsContext = createContext({} as PermissionsContextProps);
 
 const PermissionsProvider = ({children }: {children: JSX.Element | JSX.Element[]} ) => {
 
   const [permissions, setPermissions] = useState(permissionsInitState)
 
-  const askLocationPermision = () => {
-      
+  useEffect(() => {
+    AppState.addEventListener('change', (state) => {
+      if(state !== 'active') return
+      checkLocationPermission()
+    })
+  }, [])
+
+  const askLocationPermission = async () => {
+    let permissionStatus: PermissionStatus;
+    if(Platform.OS === 'ios'){
+       permissionStatus = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+    } else {
+        permissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+    }
+    setPermissions({
+      ...permissions, locationStatus: permissionStatus
+    })
   }
 
-  const checkLocationPermision = () => {
-    
+  const checkLocationPermission = async () => {
+    let permissionStatus: PermissionStatus;
+    if(Platform.OS === 'ios'){
+       permissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+    } else {
+        permissionStatus = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+    }
+    setPermissions({
+      ...permissions, locationStatus: permissionStatus
+    })
   }
   return (
       <PermissionsContext.Provider
         value={{
           permissions,
-          askLocationPermision,
-          checkLocationPermision
+          askLocationPermission,
+          checkLocationPermission
         }}
       >
         {children}
