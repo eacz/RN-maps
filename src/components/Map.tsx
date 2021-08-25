@@ -9,6 +9,7 @@ const Map = ({markers = []}: Props) => {
   return (
     <>
        <MapView
+        showsUserLocation
         style={{flex: 1}}
         initialRegion={{
           latitude: -27.4257175,
