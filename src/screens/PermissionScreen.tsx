@@ -1,17 +1,17 @@
 import React, { useContext } from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
+import BlackButton from '../components/BlackButton'
 import { PermissionsContext } from '../context/PermissionsContext'
 
+
 const PermissionScreen = () => {
-  const { permissions, askLocationPermission } = useContext(PermissionsContext)
+  const {  askLocationPermission } = useContext(PermissionsContext)
   
   return (
     <View style={styles.container} >
-      <Text>PermissionScreen</Text>
-      <Button title="Permissions" onPress={askLocationPermission} />
-      <Text>
-        {JSON.stringify(permissions, null,5)}
-      </Text>
+      <Text style={styles.title} >For use this app, location permission are needed to show you the map</Text>
+      <BlackButton title="Permissions" onPress={askLocationPermission} />
+      {/*<Text> {JSON.stringify(permissions, null,5)} </Text>*/}
     </View>
   )
 }
@@ -21,6 +21,12 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    title: {
+      width: 200,
+      textAlign: 'center',
+      marginBottom: 20,
+      fontSize: 17
     }
 });
 
