@@ -1,7 +1,5 @@
 import React from 'react'
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native'
-import { TouchableOpacity, Text } from 'react-native'
-
+import { StyleProp, StyleSheet, ViewStyle, TouchableOpacity, Text } from 'react-native'
 interface Props {
   title: string,
   onPress: () => void,
