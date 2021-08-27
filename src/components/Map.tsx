@@ -10,19 +10,21 @@ interface Props {
 }
 
 const Map = ({markers = []}: Props) => {
-  const { hasLocation, initialPosition, userLocation, getCurrentLocation, followUserLocation } = useLocation()
+  const { hasLocation, initialPosition, userLocation, getCurrentLocation, followUserLocation, stopFollowUserLocation } = useLocation()
+  const following = useRef<boolean>(true)
   const mapViewRef = useRef<MapView>()
 
   //When the component is mounted, start to follow the user
   useEffect(() => {
     followUserLocation()
     return () => {
-      //TODO: remove watcher
+      stopFollowUserLocation()
     }
   }, [] )
 
   //Follow the user if they are moving
   useEffect(() => {
+    if(!following.current) return;
     mapViewRef.current?.animateCamera({
       center: userLocation,
     })
@@ -30,6 +32,7 @@ const Map = ({markers = []}: Props) => {
 
   const centerPosition = async () => {
     const location = await getCurrentLocation()
+    following.current = true;
     mapViewRef.current?.animateCamera({
       center: location,
     })
@@ -53,6 +56,7 @@ const Map = ({markers = []}: Props) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        onTouchStart={() => following.current = false}
       >
         <Marker
           //image={require('../assets/custom-marker.png')}
