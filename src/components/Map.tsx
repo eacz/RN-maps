@@ -1,5 +1,4 @@
-import React from 'react'
-import { useRef } from 'react';
+import React, {useRef, useEffect} from 'react'
 import { StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import useLocation from '../hooks/useLocation';
@@ -11,8 +10,23 @@ interface Props {
 }
 
 const Map = ({markers = []}: Props) => {
-  const { hasLocation, initialPosition, getCurrentLocation } = useLocation()
+  const { hasLocation, initialPosition, userLocation, getCurrentLocation, followUserLocation } = useLocation()
   const mapViewRef = useRef<MapView>()
+
+  //When the component is mounted, start to follow the user
+  useEffect(() => {
+    followUserLocation()
+    return () => {
+      //TODO: remove watcher
+    }
+  }, [] )
+
+  //Follow the user if they are moving
+  useEffect(() => {
+    mapViewRef.current?.animateCamera({
+      center: userLocation,
+    })
+  }, [userLocation])
 
   const centerPosition = async () => {
     const location = await getCurrentLocation()
