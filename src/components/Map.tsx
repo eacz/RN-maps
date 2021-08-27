@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import useLocation from '../hooks/useLocation';
@@ -10,7 +11,15 @@ interface Props {
 }
 
 const Map = ({markers = []}: Props) => {
-  const { hasLocation, initialPosition } = useLocation()
+  const { hasLocation, initialPosition, getCurrentLocation } = useLocation()
+  const mapViewRef = useRef<MapView>()
+
+  const centerPosition = async () => {
+    const location = await getCurrentLocation()
+    mapViewRef.current?.animateCamera({
+      center: location,
+    })
+  }
   
   if(!hasLocation) {
     return (
@@ -21,6 +30,7 @@ const Map = ({markers = []}: Props) => {
   return (
     <>  
        <MapView
+        ref={el => mapViewRef.current = el!}
         showsUserLocation
         style={{flex: 1}}
         initialRegion={{
@@ -40,8 +50,8 @@ const Map = ({markers = []}: Props) => {
         />
       </MapView>
       <Fab 
-        onPress={() => console.log('fab')} style={styles.fabStyle}
-        iconName="star-outline" 
+        style={styles.fabStyle} iconName="compass-outline" 
+        onPress={() => centerPosition()} 
        />
     </>
   )
@@ -51,7 +61,7 @@ const styles = StyleSheet.create({
   fabStyle: {
     position: 'absolute',
     bottom: 20,
-    right: 20
+    right: 20,
   }
 });
 

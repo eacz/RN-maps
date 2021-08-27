@@ -16,7 +16,7 @@ const Fab = ({iconName, iconColor = 'white', onPress, style = {}}: Props) => {
         activeOpacity={0.8} onPress={onPress} 
         style={styles.blackButton}
       >
-        <Icon name={iconName} color={iconColor} size={35} />
+        <Icon name={iconName} color={iconColor} size={35} style={{left:1}}  />
       </TouchableOpacity>
     </View>
   )
