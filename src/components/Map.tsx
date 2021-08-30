@@ -1,6 +1,6 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import useLocation from '../hooks/useLocation';
 import LoadingScreen from '../screens/LoadingScreen';
 import Fab from './Fab';
@@ -10,7 +10,11 @@ interface Props {
 }
 
 const Map = ({markers = []}: Props) => {
-  const { hasLocation, initialPosition, userLocation, getCurrentLocation, followUserLocation, stopFollowUserLocation } = useLocation()
+  const { 
+    hasLocation, initialPosition, userLocation, routeLines, 
+    getCurrentLocation, followUserLocation, stopFollowUserLocation 
+  } = useLocation()
+  const [showPolyline, setShowPolyline] = useState(false)
   const following = useRef<boolean>(true)
   const mapViewRef = useRef<MapView>()
 
@@ -66,20 +70,31 @@ const Map = ({markers = []}: Props) => {
             longitude: -59.0243784
           }}
         />
+        { showPolyline &&  <Polyline coordinates={routeLines} strokeColor="black" strokeWidth={3} /> }
+
       </MapView>
       <Fab 
-        style={styles.fabStyle} iconName="compass-outline" 
+        style={styles.fabCenterLocation} iconName="compass-outline" 
         onPress={() => centerPosition()} 
-       />
+      />
+      <Fab 
+        style={styles.fabShowPolyline} iconName="brush-outline" 
+        onPress={() => setShowPolyline(value => !value)} 
+      />
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  fabStyle: {
+  fabCenterLocation: {
     position: 'absolute',
     bottom: 20,
     right: 20,
+  },
+  fabShowPolyline: {
+    position: 'absolute',
+    bottom: 20,
+    right: 80,
   }
 });
 
