@@ -11,7 +11,6 @@ const PermissionScreen = () => {
     <View style={styles.container} >
       <Text style={styles.title} >For use this app, location permission are needed to show you the map</Text>
       <BlackButton title="Permissions" onPress={askLocationPermission} />
-      {/*<Text> {JSON.stringify(permissions, null,5)} </Text>*/}
     </View>
   )
 }
